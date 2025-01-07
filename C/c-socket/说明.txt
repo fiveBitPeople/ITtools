@@ -1,0 +1,109 @@
+编译和运行：
+
+编译服务器端和客户端代码：
+
+bash
+复制
+gcc -o server server.c
+gcc -o client client.c
+先运行服务器端：
+
+bash
+复制
+./server
+运行客户端：
+
+bash
+复制
+./client
+注意事项：
+
+确保服务器端和客户端的IP地址和端口号一致。
+
+处理网络字节序和主机字节序的转换，使用htonl和ntohl函数。
+
+服务器端支持最多MAX_CLIENTS个客户端连接。
+
+
+实现思路
+服务端：
+
+使用select实现多客户端并发处理。
+
+解决粘包问题：发送数据前先发送数据长度（4字节，网络字节序）。
+
+接收数据时先读取长度，再根据长度读取数据内容。
+
+客户端：
+
+封装一个接口send_message，参数为要发送的信息。
+
+解决粘包问题：发送数据前先发送数据长度（4字节，网络字节序）。
+
+辅助函数：
+
+readn：确保从套接字读取指定数量的字节。
+
+writen：确保向套接字发送完整数据。
+
+需要确保在接收数据时，如果recv没有读到足够的字节，要继续读，直到读完。
+
+可能需要写一个函数来确保读取指定数量的字节。
+
+比如：
+
+ssize_t readn(int sock, void *buf, size_t count) {
+
+size_t bytes_read = 0;
+
+char *ptr = (char *)buf;
+
+while (bytes_read < count) {
+
+ssize_t n = recv(sock, ptr + bytes_read, count - bytes_read, 0);
+
+if (n <= 0) {
+
+return n;
+
+}
+
+bytes_read += n;
+
+}
+
+return bytes_read;
+
+}
+
+然后在服务器端用这个函数来读取长度和数据。
+
+同样，写一个writen函数来确保发送完整。
+
+ssize_t writen(int sock, const void *buf, size_t count) {
+
+size_t bytes_sent = 0;
+
+const char *ptr = (const char *)buf;
+
+while (bytes_sent < count) {
+
+ssize_t n = send(sock, ptr + bytes_sent, count - bytes_sent, 0);
+
+if (n <= 0) {
+
+return n;
+
+}
+
+bytes_sent += n;
+
+}
+
+return bytes_sent;
+
+}
+
+这样代码会更健壮一些。
+
+在客户端发送数据的时候，也要确保发送完整。
