@@ -11,6 +11,10 @@
 
 ### 知识管理工具
 
--   [Obsidian](https://obsidian.md/) - 本地化笔记最佳管理软件
+-   [Obsidian](https://obsidian.md/) - 本地化笔记最佳管理软件之一
+-   [Notion](https://www.notion.so/) - 在线笔记知识管理工具
+-   [Day One](https://dayoneapp.com/) - 日记软件目前不支持window
+-   [思源笔记](https://github.com/siyuan-note/siyuan?tab=readme-ov-file) - 一款隐私优先的个人知识管理系统
+
 
 
